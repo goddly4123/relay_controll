@@ -76,7 +76,7 @@ class Reject_sys:
         self.relay_status_B = 'off'
         self.queue = Q
 
-        self.Time_out = 0.01 #분해능 : 0.01초 단위로 시간으 쪼개서 계산함.
+        self.Time_out = 0.01
 
         """ 필요한 시간이 되기까지 대기하는 시간 """
         self.reject_need_time_A = int(A_wait / self.Time_out)
@@ -103,8 +103,10 @@ class Reject_sys:
             try:
                 answer = self.queue.get(timeout=self.Time_out)
 
-                if answer == 'r':
+                if answer == 'a-r':
                     self.T_A = self.time_traveler('A', 0, 1)
+
+                elif answer == 'b-r':
                     self.T_B = self.time_traveler('B', 0, 1)
 
                 elif answer == 'q':
@@ -138,6 +140,7 @@ class Reject_sys:
             self.relay.state(2, True)
             self.relay_status_B = 'on'
 
+
     def state_off(self, i):
         """ i에 해당되는 릴레이가 꺼져 있으면 가동하고 현재의 시간을 저장 """
         if i == 1:
@@ -147,6 +150,7 @@ class Reject_sys:
         elif i == 2:
             self.relay.state(2, False)
             self.relay_status_B = 'off'
+
 
     def action(self):
         if 1 in self.T_A[self.reject_need_time_A:] and self.relay_status_A == 'off':
@@ -165,8 +169,12 @@ class Reject_sys:
 if __name__ == '__main__':
 
     task_queue = Queue()
+
+    #릴레이 작동 대기 시간
     A_wait = 4
     B_wait = 4
+
+    #릴레이 작동 시간
     A_run = 1
     B_run = 1
 
@@ -175,7 +183,7 @@ if __name__ == '__main__':
 
     text = ''
     while True:
-        text = input('Insert data (Ex, r:Reject, q:Quit)..\n')
-        task_queue.put(text)
+        text = input('Insert data (Ex, a-r, b-r:Reject, q:Quit)..\n')
+        task_queue.put(text) # <-text에 a-r 또는 b-r 또는 q 입력
         if text == 'q':
             break
