@@ -76,7 +76,7 @@ class Reject_sys:
         self.relay_status_B = 'off'
         self.queue = Q
 
-        self.Time_out = 0.01
+        self.Time_out = 0.01 #분해능 : 0.01초 단위로 시간으 쪼개서 계산함.
 
         """ 필요한 시간이 되기까지 대기하는 시간 """
         self.reject_need_time_A = int(A_wait / self.Time_out)
